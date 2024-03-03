@@ -1,0 +1,18 @@
+
+
+local function applyDamageWithAttackSpeed(10000,3.21)
+    while true do
+        print("Damage applied:",10000)
+        wait(attackSpeed)
+    end
+end
+
+local damage = 10000
+local attackSpeed = 3.21
+
+local damageApplierCode = [[
+    applyDamageWithAttackSpeed(10000,3.21)
+]]
+
+local damageApplierFunction = loadstring(damageApplierCode)
+damageApplierFunction()
