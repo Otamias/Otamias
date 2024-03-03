@@ -1,35 +1,51 @@
-local function applyDamage(damage, godModeEnabled)
-    while true do
-        if not godModeEnabled then
-            print("Damage applied:", damage)
-        else
-            print("Damage applied (God mode enabled):", damage)
+local function applyDamage(damage, godModeEnabled, godlyDamageEnabled)
+    if not godModeEnabled then
+        if godlyDamageEnabled then
+            damage = damage * 2  -- Double the damage if godly damage is enabled
         end
-        wait()
+        print("Damage applied:", damage)
+    else
+        print("Damage applied (God mode enabled):", damage)
     end
 end
 
-local damage = 20000
+local damageValues = {20000}  -- Set damage to 20,000
+local currentDamageIndex = 1
 local godModeEnabled = true
+local godlyDamageEnabled = false
 
 local icon = Instance.new("ImageButton")
-icon.Image = "rbxassetid://16550474140"
+icon.Image = "rbxassetid://16595698809"  -- Image ID provided
 icon.Size = UDim2.new(0, 100, 0, 100)
 icon.Position = UDim2.new(0.5, -50, 0.5, -50)
 icon.BackgroundTransparency = 1
 icon.Parent = game.Players.LocalPlayer.PlayerGui
 
+-- Anti-cheat detection
+local lastDamageApplied = os.time()  -- Track the time when damage was last applied
+
+local function checkAntiCheat()
+    local currentTime = os.time()
+    if currentTime - lastDamageApplied < 1 then
+        -- If damage is being applied too frequently, possibly due to exploiting
+        print("Possible script exploit detected. Damage applied too frequently.")
+        -- You can add additional actions here, such as reporting the player or taking other measures
+    end
+    lastDamageApplied = currentTime
+end
+
+local function onDamageApplied(damage)
+    applyDamage(damage, godModeEnabled, godlyDamageEnabled)
+    checkAntiCheat()  -- Check for script exploits after applying damage
+end
+
+-- Attach onDamageApplied function to button click
 local button = Instance.new("TextButton")
 button.Text = "Toggle God Mode"
 button.Size = UDim2.new(0, 200, 0, 50)
 button.Position = UDim2.new(0.5, -100, 0.6, -25)
 button.Visible = false
-button.Parent = game.Players.LocalPlayer.PlayerGui
-
-icon.MouseButton1Click:Connect(function()
-    icon.Visible = false
-    button.Visible = true
-end)
+button.Parent = icon.Parent  -- Parent button to the same parent as the icon
 
 button.MouseButton1Click:Connect(function()
     godModeEnabled = not godModeEnabled
@@ -41,4 +57,13 @@ button.MouseButton1Click:Connect(function()
     end
 end)
 
-applyDamage(damage, godModeEnabled)
+-- Connect icon click event
+icon.MouseButton1Click:Connect(function()
+    icon.Visible = false
+    button.Visible = true
+end)
+
+-- Trigger damage application when button is clicked
+button.MouseButton1Click:Connect(function()
+    onDamageApplied(damageValues[currentDamageIndex])
+end)
