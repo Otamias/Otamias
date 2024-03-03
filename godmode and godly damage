@@ -1,31 +1,30 @@
-local function applyDamageWithAttackSpeed(damage, attackSpeed, godModeEnabled)
+local function applyDamage(damage, godModeEnabled)
     while true do
         if not godModeEnabled then
             print("Damage applied:", damage)
         else
             print("Damage applied (God mode enabled):", damage)
         end
-        wait(attackSpeed)
+        wait()
     end
 end
 
 local damage = 20000
-local attackSpeed = 5.21
 local godModeEnabled = true
 
 local icon = Instance.new("ImageButton")
-icon.Image = "rbxassetid://5009915812"
+icon.Image = "rbxassetid://16550474140"
 icon.Size = UDim2.new(0, 100, 0, 100)
 icon.Position = UDim2.new(0.5, -50, 0.5, -50)
 icon.BackgroundTransparency = 1
-icon.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+icon.Parent = game.Players.LocalPlayer.PlayerGui
 
 local button = Instance.new("TextButton")
 button.Text = "Toggle God Mode"
 button.Size = UDim2.new(0, 200, 0, 50)
 button.Position = UDim2.new(0.5, -100, 0.6, -25)
 button.Visible = false
-button.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+button.Parent = game.Players.LocalPlayer.PlayerGui
 
 icon.MouseButton1Click:Connect(function()
     icon.Visible = false
@@ -40,10 +39,6 @@ button.MouseButton1Click:Connect(function()
     else
         button.Text = "God Mode Disabled"
     end
-    local success, errorMsg = pcall(applyDamageWithAttackSpeed, damage, attackSpeed, godModeEnabled)
-    if not success then
-        warn("Failed to execute damage application script: " .. errorMsg)
-    end
 end)
 
-applyDamageWithAttackSpeed(damage, attackSpeed, godModeEnabled)
+applyDamage(damage, godModeEnabled)
