@@ -14,13 +14,6 @@ local currentDamageIndex = 1
 local godModeEnabled = true
 local godlyDamageEnabled = false
 
-local icon = Instance.new("ImageButton")
-icon.Image = "rbxassetid://16595698809"  -- Image ID provided
-icon.Size = UDim2.new(0, 100, 0, 100)
-icon.Position = UDim2.new(0.5, -50, 0.5, -50)
-icon.BackgroundTransparency = 1
-icon.Parent = game.Players.LocalPlayer.PlayerGui
-
 -- Anti-cheat detection
 local lastDamageApplied = os.time()  -- Track the time when damage was last applied
 
@@ -39,31 +32,26 @@ local function onDamageApplied(damage)
     checkAntiCheat()  -- Check for script exploits after applying damage
 end
 
--- Attach onDamageApplied function to button click
-local button = Instance.new("TextButton")
-button.Text = "Toggle God Mode"
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.6, -25)
-button.Visible = false
-button.Parent = icon.Parent  -- Parent button to the same parent as the icon
+-- Create floating icon
+local icon = Instance.new("Frame")
+icon.Size = UDim2.new(0, 100, 0, 100)
+icon.Position = UDim2.new(0.5, -50, 0.5, -50)
+icon.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- Green color
+icon.BackgroundTransparency = 0.5  -- Adjust transparency as needed
+icon.Parent = game.Players.LocalPlayer.PlayerGui
 
-button.MouseButton1Click:Connect(function()
-    godModeEnabled = not godModeEnabled
-    print("God mode:", godModeEnabled)
-    if godModeEnabled then
-        button.Text = "God Mode Enabled"
-    else
-        button.Text = "God Mode Disabled"
+-- Attach onDamageApplied function to icon touch
+icon.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        onDamageApplied(damageValues[currentDamageIndex])
     end
 end)
 
--- Connect icon click event
-icon.MouseButton1Click:Connect(function()
-    icon.Visible = false
-    button.Visible = true
-end)
-
--- Trigger damage application when button is clicked
-button.MouseButton1Click:Connect(function()
-    onDamageApplied(damageValues[currentDamageIndex])
+-- Toggle visibility of icon
+local visible = false
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.F then
+        visible = not visible
+        icon.Visible = visible
+    end
 end)
