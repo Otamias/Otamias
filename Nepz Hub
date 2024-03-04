@@ -1,0 +1,91 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local gui = player:WaitForChild("PlayerGui")
+
+local function applyDamage(damage, godModeEnabled, godlyDamageEnabled)
+    if not godModeEnabled then
+        if godlyDamageEnabled then
+            damage = damage * 2
+        end
+        print("Damage applied:", damage)
+    else
+        print("Damage applied (God mode enabled):", damage)
+    end
+end
+
+local damageValues = {20000}
+local godModeEnabled = true
+local godlyDamageEnabled = false
+
+local lastDamageApplied = os.time()
+
+local function checkAntiCheat()
+    local currentTime = os.time()
+    if currentTime - lastDamageApplied < 1 then
+        print("Possible script exploit detected. Damage applied too frequently.")
+    end
+    lastDamageApplied = currentTime
+end
+
+local function toggleGodMode()
+    godModeEnabled = not godModeEnabled
+    print("God mode:", godModeEnabled)
+end
+
+local function toggleGodlyDamage()
+    godlyDamageEnabled = not godlyDamageEnabled
+    print("Godly damage:", godlyDamageEnabled)
+end
+
+local icon = Instance.new("Frame")
+icon.Size = UDim2.new(0, 100, 0, 100)
+icon.Position = UDim2.new(0.5, -50, 0.5, -50)
+icon.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+icon.BackgroundTransparency = 0.5
+icon.Visible = true
+icon.Parent = gui
+
+local nameLabel = Instance.new("TextLabel")
+nameLabel.Text = "Nepz hub"
+nameLabel.Size = UDim2.new(0, 100, 0, 20)
+nameLabel.Position = UDim2.new(0.5, -50, 0.2, -10)
+nameLabel.TextColor3 = Color3.fromRGB(255, 255, 0) -- Dark yellow color
+nameLabel.BackgroundTransparency = 1
+nameLabel.Parent = gui
+
+local damageButton = Instance.new("TextButton")
+damageButton.Text = "Apply Damage"
+damageButton.Size = UDim2.new(0, 150, 0, 50)
+damageButton.Position = UDim2.new(0.5, -75, 0.2, 0)
+damageButton.Parent = icon
+damageButton.MouseButton1Click:Connect(function()
+    applyDamage(damageValues[1], godModeEnabled, godlyDamageEnabled)
+    checkAntiCheat()
+end)
+
+local godModeButton = Instance.new("TextButton")
+godModeButton.Text = "Toggle God Mode"
+godModeButton.Size = UDim2.new(0, 150, 0, 50)
+godModeButton.Position = UDim2.new(0.5, -75, 0.8, 0)
+godModeButton.Parent = icon
+godModeButton.MouseButton1Click:Connect(toggleGodMode)
+
+local godlyDamageButton = Instance.new("TextButton")
+godlyDamageButton.Text = "Toggle Godly Damage"
+godlyDamageButton.Size = UDim2.new(0, 150, 0, 50)
+godlyDamageButton.Position = UDim2.new(0.5, -75, 0.5, 0)
+godlyDamageButton.Parent = icon
+godlyDamageButton.MouseButton1Click:Connect(toggleGodlyDamage)
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = gui
+
+icon.Parent = screenGui
+nameLabel.Parent = screenGui
+
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.F then
+        icon.Visible = not icon.Visible
+    end
+end)
